@@ -14,6 +14,7 @@ import (
 	"strings"
 )
 
+// BookResult struct for data received from book lookup
 type BookResult struct {
 	Title   string `json:"full_title"`
 	Authors []struct {
@@ -22,6 +23,7 @@ type BookResult struct {
 	Error string `json:"error"`
 }
 
+// Author struct for data received from author search
 type Author struct {
 	AlternateNames []string `json:"alternate_names"`
 	Name           string   `json:"name"`
@@ -29,6 +31,7 @@ type Author struct {
 	Revision       int      `json:"revision"`
 }
 
+// WorksResult struct for list of books by author
 type WorksResult struct {
 	Links struct {
 		Self   string `json:"self"`
@@ -39,10 +42,13 @@ type WorksResult struct {
 	Entries []BookShort `json:"entries"`
 }
 
+// BookShort struct for output data of books
 type BookShort struct {
 	Title    string `json:"title"`
 	Revision int    `json:"revision"`
 }
+
+// AuthorOutput struct for output data of authors
 type AuthorOutput struct {
 	Name     string      `json:"name"`
 	Revision int         `json:"revision"`
@@ -55,6 +61,7 @@ type AuthorOutput struct {
 // 3. Create list of works for each author (name, revision)
 // 4. Print result to stout in yam format sorted by author name, count of revision (asc, desc as argument). Names of authors have to be part of output.
 // As source of information about books, works and authors use this api: https://openlibrary.org/developers/api
+
 func main() {
 	//test_isbn := "9780062899149"
 	//test_isbn := "9781633412545" // multiple authors
@@ -115,7 +122,7 @@ func main() {
 		}
 
 		var authorData Author
-		_ = json.Unmarshal(authorBytes, &authorData)
+		_ = json.Unmarshal(authorBytes, &authorData) // convert input string to author struct
 
 		// retrieve author's books (with increased limit - default is 50)
 		resp, authorErr = http.Get(fmt.Sprintf("https://openlibrary.org%s/works.json?limit=1000", author.Key))
@@ -128,7 +135,7 @@ func main() {
 		}
 
 		var authorResponse WorksResult
-		_ = json.Unmarshal(authorBytes, &authorResponse)
+		_ = json.Unmarshal(authorBytes, &authorResponse) // convert input string to work struct
 
 		//fmt.Printf("Author retrieved: %s\n", authorBytes)
 		//fmt.Printf("\n\nBooks:\n%+v\n\n", authorResponse.Entries)
